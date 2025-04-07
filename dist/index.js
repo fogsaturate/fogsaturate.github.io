@@ -5,23 +5,8 @@ const doneTodayText = document.getElementById("donetoday");
 const lastFinishedDateText = document.getElementById("lastfinisheddate");
 const generateButton = document.getElementById("generatebutton");
 const date = new Date();
-function setCookie(name, val) {
-    const date = new Date();
-    const value = val;
-    // Set it expire in 7 days
-    date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
-    // Set it
-    document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
-}
-function getCookie(name) {
-    const value = "; " + document.cookie;
-    const parts = value.split("; " + name + "=");
-    if (parts.length == 2) {
-        return decodeURIComponent(parts.pop().split(";").shift());
-    }
-}
 function getUserDataCookie() {
-    const userDataCookie = getCookie("userData");
+    const userDataCookie = localStorage.getItem("userData");
     if (!userDataCookie) {
         return null;
     }
@@ -32,17 +17,21 @@ function getUserDataCookie() {
 }
 function updateUserDataCookie(userData) {
     console.log("Updating userData cookie...");
-    const userDataEncoded = encodeURIComponent(JSON.stringify(userData));
-    setCookie("userData", userDataEncoded);
+    localStorage.setItem("userData", JSON.stringify(userData));
 }
 let userData = getUserDataCookie();
 if (!userData || isTodayDifferent(userData.lastfinisheddate)) {
     console.log("userData cookie does not exist / today is different! Creating new one...");
     const newUserData = {
+        falloutMethod: "N/A",
+        rbMethod: "N/A",
         donetoday: false,
         lastfinisheddate: date,
         rerolls: 3
     };
+    if (userData) {
+        newUserData.lastfinisheddate = userData.lastfinisheddate;
+    }
     updateUserDataCookie(newUserData);
     userData = getUserDataCookie();
 }
@@ -64,6 +53,8 @@ function dateToMMDDYYYYString(date) {
     return `${month}-${day}-${year}`;
 }
 function on_load() {
+    falloutTrillText.innerText = "Fallout Trill Method:\n" + userData.falloutMethod;
+    rbTrillText.innerText = "RB Trill Method:\n" + userData.rbMethod;
     rerollText.innerText = "Rerolls:\n" + userData.rerolls + "x";
     doneTodayText.innerText = "Done Today?\n" + booleanToText(userData.donetoday);
     if (userData.lastfinisheddate instanceof Date) {
@@ -140,6 +131,8 @@ function generateMethod() {
     let randomRBMethod = rbMethods[randomInt(rbMethods.length)];
     falloutTrillText.innerText = "Fallout Trill Method:\n" + randomFalloutMethod;
     rbTrillText.innerText = "RB Trill Method:\n" + randomRBMethod;
+    userData.falloutMethod = randomFalloutMethod;
+    userData.rbMethod = randomRBMethod;
     userData.rerolls -= 1;
     userData.donetoday = true;
     userData.lastfinisheddate = date;
