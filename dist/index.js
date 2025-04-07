@@ -30,6 +30,8 @@ if (!userData || isTodayDifferent(userData.lastfinisheddate)) {
         rerolls: 3
     };
     if (userData) {
+        newUserData.falloutMethod = userData.falloutMethod;
+        newUserData.rbMethod = userData.rbMethod;
         newUserData.lastfinisheddate = userData.lastfinisheddate;
     }
     updateUserDataCookie(newUserData);

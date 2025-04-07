@@ -52,7 +52,9 @@ if (!userData || isTodayDifferent(userData.lastfinisheddate)) {
     }
 
     if (userData) {
-        newUserData.lastfinisheddate = userData.lastfinisheddate
+        newUserData.falloutMethod = userData.falloutMethod;
+        newUserData.rbMethod = userData.rbMethod;
+        newUserData.lastfinisheddate = userData.lastfinisheddate;
     }
 
     updateUserDataCookie(newUserData);
